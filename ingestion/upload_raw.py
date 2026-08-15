@@ -4,6 +4,16 @@ import hashlib
 import os 
 from dotenv import load_dotenv
 
+def create_buckets(s3_client):
+    buckets = ["raw", "staging", "curated", "archive"]
+    for bucket in buckets:
+        try:
+            s3_client.create_bucket(Bucket=bucket)
+            print(f"✅ Bucket '{bucket}' créé")
+        except s3_client.exceptions.BucketAlreadyOwnedByYou:
+            print(f"ℹ️ Bucket '{bucket}' existe déjà")
+
+
 def calculate_md5(filepath):
     hash_md5 = hashlib.md5()
     with open(filepath, "rb") as f:
@@ -29,6 +39,7 @@ files = {
     "lineD": "data/raw/LineD_SpikeControl.csv",
     "lineE": "data/raw/LineE_SmoothRun.csv",    
 }
+create_buckets(s3)
 
 for line_name, filepath in files.items():
     df = pd.read_csv(filepath)
