@@ -16,3 +16,8 @@ services:
 
 volumes:
   minio_data:
+
+networks:
+  default:
+    name: shared_network
+    external: false
